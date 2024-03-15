@@ -6,6 +6,7 @@ from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.common.by import By 
 from selenium.webdriver.common.keys import Keys 
 
+import os.path
 import time
 import json
 
@@ -29,6 +30,7 @@ prefs = {
 
 options.add_experimental_option('prefs', prefs)
 options.add_argument('--kiosk-printing')
+options.add_argument('start-maximized')
 
 # Iniciar el driver
 driver = webdriver.Chrome(options=options)
@@ -48,8 +50,10 @@ clicaBoton.click()
 
 time.sleep(2)
 
+ficha = '2758519'
+
 cajaFicha   = driver.find_element(By.XPATH, '//*[@id="nombreMateria"]')
-cajaFicha.send_keys('2758519')
+cajaFicha.send_keys(ficha)
 botonBuscar = driver.find_element(By.XPATH, '//*[@id="nombreMateriabuscar"]')
 botonBuscar.click()
 
@@ -59,14 +63,17 @@ botonMostrarFicha = driver.find_element(By.XPATH, '//*[@id="catalogo-main-conten
 botonMostrarFicha.click()
 
 ban = True
-contador = 50
+contador = 2
 while ban and contador > 0 :
     try:
         time.sleep(2)
         driver.execute_script('javascript:verMas()')
-    except:
+    except: 
         ban = False
     contador -= 1
+
+with open(os.path.join('',ficha + '.html'), "a", encoding="utf-8") as f:
+    f.write(driver.page_source)
 
 # Ejecutar el script de impresión
 driver.execute_script('window.print();')
