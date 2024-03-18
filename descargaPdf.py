@@ -50,36 +50,47 @@ clicaBoton.click()
 
 time.sleep(2)
 
-ficha = '2758519'
+paginas =driver.find_elements(By.XPATH,'//*[@id="pagination"]/div/ul/li')
 
-cajaFicha   = driver.find_element(By.XPATH, '//*[@id="nombreMateria"]')
-cajaFicha.send_keys(ficha)
-botonBuscar = driver.find_element(By.XPATH, '//*[@id="nombreMateriabuscar"]')
-botonBuscar.click()
+for pagina in range(1, len(paginas) - 3):
 
-time.sleep(2)
+    fichas = driver.find_elements(By.XPATH,'//*[@id="catalogo-main-content"]/li')
 
-botonMostrarFicha = driver.find_element(By.XPATH, '//*[@id="catalogo-main-content"]/li/div/div[2]/span[1]/div/a')
-botonMostrarFicha.click()
+    for i in range(1, len(fichas) + 1):
 
-ban = True
-contador = 2
-while ban and contador > 0 :
-    try:
+        botonMostrarFicha = driver.find_element(By.XPATH, '//*[@id="catalogo-main-content"]/li['+str(i)+']/div/div[2]/span[1]/div/a')
+        botonMostrarFicha.click()
+        nombreArchivo= (driver.find_element(By.XPATH,'//*[@id="groupTitle tt"]').text).replace("\n", " ")
+
+        ban = True
+        contador = 50   
+        while ban and contador > 0 :
+            try:
+                time.sleep(2)
+                driver.execute_script('javascript:verMas()')
+            except: 
+                ban = False
+            contador -= 1
+
+        with open(os.path.join('', nombreArchivo + '.html'), "a", encoding="utf-8") as f:
+            f.write(driver.page_source)
+
+        Ejecutar el script de impresión
+        driver.execute_script('window.print();')
+
+        print('ficha ', nombreArchivo)
+        driver.get('https://sena.territorio.la/init.php')
+        cadena= "goPage(" + str(pagina) + ")"
+        driver.execute_script(cadena)
         time.sleep(2)
-        driver.execute_script('javascript:verMas()')
-    except: 
-        ban = False
-    contador -= 1
+    
+    print("pagina que recorro:" , pagina)
+    driver.execute_script("goPage('+1')")
+    time.sleep(4)
 
-with open(os.path.join('',ficha + '.html'), "a", encoding="utf-8") as f:
-    f.write(driver.page_source)
 
-# Ejecutar el script de impresión
-driver.execute_script('window.print();')
 
-# Esperar 20 segundos
-time.sleep(2)
+time.sleep(5)
 
 # Cerrar el driver
 driver.quit()
