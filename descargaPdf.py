@@ -41,6 +41,7 @@ driver.get(url)
 
 time.sleep(2)
 
+# Loggearse con el usuario autorizado
 usuario     = driver.find_element(By.XPATH, '//*[@id="MyUserName"]')
 password    = driver.find_element(By.XPATH, '//*[@id="MyPassWord"]')
 usuario.send_keys('jpulgarin@sena.edu.co')
@@ -63,7 +64,7 @@ for pagina in range(1, len(paginas) - 3):
         nombreArchivo= (driver.find_element(By.XPATH,'//*[@id="groupTitle tt"]').text).replace("\n", " ")
 
         ban = True
-        contador = 50   
+        contador = 40   
         while ban and contador > 0 :
             try:
                 time.sleep(2)
@@ -75,7 +76,7 @@ for pagina in range(1, len(paginas) - 3):
         with open(os.path.join('', nombreArchivo + '.html'), "a", encoding="utf-8") as f:
             f.write(driver.page_source)
 
-        Ejecutar el script de impresión
+        # Ejecutar el script de impresión
         driver.execute_script('window.print();')
 
         print('ficha ', nombreArchivo)
